@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useTodosStore } from "~/stores/todos";
 import { storeToRefs } from "pinia";
-import { awaitExpression } from "@babel/types";
 
 const store = useTodosStore();
 

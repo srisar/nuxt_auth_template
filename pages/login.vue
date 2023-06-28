@@ -1,5 +1,10 @@
 <script setup lang="ts">
 const { userForm, loading, login } = useAuth();
+
+const authenticated = useState('authenticated')
+
+console.log('authenticated: ', authenticated.value);
+
 </script>
 
 <template>
