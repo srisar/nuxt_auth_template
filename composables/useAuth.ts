@@ -1,5 +1,3 @@
-import { LocationQueryValue } from 'vue-router';
-
 /* ---------------------------------------------------------------------------------------------- */
 
 export interface ILoginPayload {
@@ -51,6 +49,7 @@ export default function () {
    * Load token from the cookie
    */
   function loadToken() {
+    console.log('loading token data from cookie');
     if (authToken.value) authenticated.value = true;
   }
 
