@@ -1,3 +1,5 @@
+import { LocationQueryValue } from 'vue-router';
+
 /* ---------------------------------------------------------------------------------------------- */
 
 export interface ILoginPayload {
@@ -16,6 +18,14 @@ export interface ILoginResponse {
   gender: string;
 }
 
+export interface IAuthUser {
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  image: string;
+}
+
 /* ---------------------------------------------------------------------------------------------- */
 
 /**
@@ -24,6 +34,7 @@ export interface ILoginResponse {
  */
 export default function () {
   const authToken = useCookie('auth_token');
+  const authUser = useCookie<IAuthUser | null>('auth_user');
 
   const authenticated = useState('authenticated', () => false);
 
@@ -34,23 +45,33 @@ export default function () {
     password: '0lelplR',
   });
 
+  /* -------------------------------------------------------------------------------------------- */
+
   /**
    * Load token from the cookie
    */
-  const loadToken = () => {
+  function loadToken() {
     if (authToken.value) authenticated.value = true;
-  };
+  }
+
+  /* -------------------------------------------------------------------------------------------- */
 
   /**
    * Login
    */
-  const login = async () => {
+  async function login(to: any | undefined = undefined) {
     await _authenticateUser(userForm.value);
 
-    if (authenticated.value) {
+    if (!authenticated.value) return;
+
+    if (to) {
+      navigateTo(to);
+    } else {
       navigateTo('/');
     }
-  };
+  }
+
+  /* -------------------------------------------------------------------------------------------- */
 
   /**
    * Logout
@@ -60,13 +81,14 @@ export default function () {
     navigateTo('/login');
   }
 
+  /* -------------------------------------------------------------------------------------------- */
+
   /**
-   * @private
    * Authenticate user and set cookie
    * @param username
    * @param password
    */
-  const _authenticateUser = async ({ username, password }: ILoginPayload) => {
+  async function _authenticateUser({ username, password }: ILoginPayload) {
     const { data, pending, execute } = useFetch<ILoginResponse>(
       'https://dummyjson.com/auth/login',
       {
@@ -89,22 +111,40 @@ export default function () {
     await execute();
 
     if (data.value) {
+      /*
+       * setting auth user & token
+       */
       authToken.value = data.value.token;
+
+      authUser.value = {
+        username: data.value.username,
+        email: data.value.email,
+        firstName: data.value.firstName,
+        lastName: data.value.lastName,
+        image: data.value.image,
+      };
+
       authenticated.value = true;
     }
-  };
+  }
+
+  /* -------------------------------------------------------------------------------------------- */
 
   /**
    * Clear auth token from the cooke and set authenticated status to false
    */
   function _clearAuthentication() {
     authToken.value = null;
+    authUser.value = null;
     authenticated.value = false;
   }
+
+  /* -------------------------------------------------------------------------------------------- */
 
   return {
     userForm,
     authToken,
+    authUser,
     authenticated,
     login,
     logout,

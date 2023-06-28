@@ -1,10 +1,19 @@
 <script setup lang="ts">
+/* ---------------------------------------------------------------------------------------------- */
+
+definePageMeta({
+  layout: 'login',
+});
+
+/* ---------------------------------------------------------------------------------------------- */
+
 const { userForm, loading, login } = useAuth();
 
-const authenticated = useState('authenticated')
+async function doLogin() {
+  const { to } = useRoute().query;
 
-console.log('authenticated: ', authenticated.value);
-
+  await login(to);
+}
 </script>
 
 <template>
@@ -33,7 +42,7 @@ console.log('authenticated: ', authenticated.value);
           />
         </div>
 
-        <button class="btn btn-wide btn-primary" @click="login">
+        <button class="btn btn-wide btn-primary" @click="doLogin">
           <span class="loading loading-spinner" v-if="loading"></span>
           <span v-else>Login</span>
         </button>

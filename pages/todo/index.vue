@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { useTodosStore } from '~/stores/todos';
-import { storeToRefs } from 'pinia';
-
 /* ---------------------------------------------------------------------------------------------- */
 
 definePageMeta({
@@ -9,19 +6,30 @@ definePageMeta({
 });
 
 /* ---------------------------------------------------------------------------------------------- */
+/*
+ * Fetching todo-items
+ */
 
-const store = useTodosStore();
+interface TodoResponse {
+  id: number;
+  title: string;
+  completed: boolean;
+}
 
-const { todos } = storeToRefs(store);
+const { data: todos, pending } = useFetch<TodoResponse[]>('https://jsonplaceholder.typicode.com/todos');
 
-await store.fetchTodos();
+/* ---------------------------------------------------------------------------------------------- */
 </script>
 
 <template>
   <h2 class="text-2xl font-bold mb-5">Todos</h2>
 
-  <div v-for="todo in todos">
-    <p :class="[todo.completed ? 'line-through text-primary/20' : '']">{{ todo.title }}</p>
+  <div class="flex justify-center" v-if="pending">
+    <div class="loading w-32"></div>
+  </div>
+
+  <div v-for="x in todos">
+    <p :class="[x.completed ? 'line-through text-primary/20' : '']">{{ x.title }}</p>
   </div>
 </template>
 

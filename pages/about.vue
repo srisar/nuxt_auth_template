@@ -1,17 +1,8 @@
-<script setup lang="ts">
-
-const authenticated = useState('authenticated')
-
-console.log('authenticated: ', authenticated.value);
-
-
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div>
     <h1 class="text-3xl font-bold mb-5">About page</h1>
-
-    <p>{{ authenticated }}</p>
 
     <p>
       Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus accusantium amet corporis
